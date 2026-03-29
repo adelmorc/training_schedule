@@ -22,7 +22,6 @@
             justify-content: center;
             align-items: center;
             height: 100vh; 
-            text-align: center;
         }
 
         .container {
@@ -32,6 +31,8 @@
             box-shadow: 0 4px 15px rgba(0,0,0,0.1); 
             max-width: 400px;
             width: 90%;
+            text-align: center;
+            position: relative;
         }
 
         .logo {
@@ -53,17 +54,67 @@
             margin: 0 auto;
             border-radius: 2px;
         }
+
+        /* 🔥 Header com usuário */
+        .user-bar {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            text-align: right;
+            font-size: 0.9rem;
+        }
+
+        .logout-btn {
+            margin-top: 5px;
+            padding: 5px 10px;
+            border: none;
+            background-color: #e74c3c;
+            color: white;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.8rem;
+        }
+
+        .logout-btn:hover {
+            background-color: #c0392b;
+        }
+
     </style>
 </head>
 <body>
 
     <div class="container">
+
+        <!-- 🔥 Usuário logado -->
+        <div class="user-bar">
+            <div id="userName"></div>
+            <button class="logout-btn" onclick="logout()">Sair</button>
+        </div>
+
         <img src="static/img/logo1.png" alt="Logo do site" class="logo">
 
         <h1>Em desenvolvimento...</h1>
 
         <div class="divider"></div>
     </div>
+
+    <script>
+        // 🔒 Proteção de rota
+        const user = sessionStorage.getItem("user");
+
+        if (!user) {
+            window.location.href = "login.html";
+        }
+
+        // 👤 Exibe usuário
+        document.getElementById("userName").textContent = "👤 " + user;
+
+        // 🚪 Logout
+        function logout() {
+            sessionStorage.removeItem("user");
+            window.location.href = "login.html";
+        }
+    </script>
 
 </body>
 </html>
