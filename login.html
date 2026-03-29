@@ -129,20 +129,16 @@
             const username = document.getElementById("username").value;
             const password = document.getElementById("password").value;
 
-            // 🔥 Login fake (pode alterar depois)
             if (username === "admin" && password === "123") {
                 
-                // salva na sessão
                 sessionStorage.setItem("user", username);
 
-                // redireciona
                 window.location.href = "index.html";
             } else {
                 errorMsg.textContent = "Usuário ou senha inválidos!";
             }
         });
 
-        // 🔥 Se já estiver logado, pula login
         if (sessionStorage.getItem("user")) {
             window.location.href = "index.html";
         }
