@@ -133,9 +133,10 @@
 
                 const data = await response.json()
 
-                document.getElementById("username").textContent = "👤 " + data.user.login
+                document.getElementById("userName").textContent = "👤 " + data.user.login
 
             } catch (error) {
+                console.log("ERRO AUTH:", error)
                 localStorage.removeItem("token")
                 sessionStorage.removeItem("user")
                 window.location.href = "login.html"
