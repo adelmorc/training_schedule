@@ -86,10 +86,6 @@
             <input type="password" id="senha" placeholder="Senha" required>
         </div>
 
-        <div class="input-group">
-            <input type="password" id="senha2" placeholder="Confirmar Senha" required>
-        </div>
-
         <button class="btn">Cadastrar</button>
 
         <p class="msg" id="msg"></p>
@@ -108,12 +104,11 @@ form.addEventListener("submit", async function(e) {
     const nome = document.getElementById("nome").value
     const login = document.getElementById("login").value
     const senha = document.getElementById("senha").value
-    const senha2 = document.getElementById("senha2").value
 
     const response = await fetch("https://trainingscheduleback-production-2a22.up.railway.app/auth/register", {
         method: "POST",
         headers: {"Content-Type": "application/json"},
-        body: JSON.stringify({ nome, login, senha, senha2 })
+        body: JSON.stringify({ nome, login, senha })
     })
 
     const data = await response.json()
