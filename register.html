@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastrar | Training Schedule</title>
+
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f7f6;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .container {
+            background: white;
+            padding: 3rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            width: 90%;
+            max-width: 400px;
+            text-align: center;
+        }
+
+        .input-group { margin-bottom: 1rem; }
+
+        .input-group input {
+            width: 100%;
+            padding: 10px;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 10px;
+            background: #2ecc71;
+            border: none;
+            color: white;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        .link {
+            margin-top: 15px;
+            display: block;
+        }
+
+        .msg { margin-top: 10px; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Cadastrar</h1>
+
+    <form id="registerForm">
+        <div class="input-group">
+            <input type="text" id="nome" placeholder="Nome" required>
+        </div>
+
+        <div class="input-group">
+            <input type="text" id="login" placeholder="Login" required>
+        </div>
+
+        <div class="input-group">
+            <input type="password" id="senha" placeholder="Senha" required>
+        </div>
+
+        <button class="btn">Cadastrar</button>
+
+        <p class="msg" id="msg"></p>
+    </form>
+
+    <a href="login.html" class="link">Voltar para login</a>
+</div>
+
+<script>
+const form = document.getElementById("registerForm")
+const msg = document.getElementById("msg")
+
+form.addEventListener("submit", async function(e) {
+    e.preventDefault()
+
+    const nome = document.getElementById("nome").value
+    const login = document.getElementById("login").value
+    const senha = document.getElementById("senha").value
+
+    const response = await fetch("http://trainingscheduleback-production.up.railway.app/auth/register", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({ nome, login, senha })
+    })
+
+    const data = await response.json()
+
+    if (!response.ok) {
+        msg.style.color = "red"
+        msg.textContent = data.error
+        return
+    }
+
+    msg.style.color = "green"
+    msg.textContent = "Usuário criado com sucesso!"
+
+    setTimeout(() => {
+        window.location.href = "login.html"
+    }, 1500)
+})
+</script>
+
+</body>
+</html>

@@ -7,16 +7,11 @@
     <title>Login | Training Schedule</title>
 
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background-color: #f4f7f6;
-            color: #333;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -33,16 +28,9 @@
             text-align: center;
         }
 
-        .logo {
-            width: 250px;
-            margin-bottom: 1rem;
-        }
+        .logo { width: 250px; margin-bottom: 1rem; }
 
-        h1 {
-            font-size: 1.8rem;
-            color: #2c3e50;
-            margin-bottom: 1.5rem;
-        }
+        h1 { margin-bottom: 1.5rem; }
 
         .divider {
             height: 4px;
@@ -52,16 +40,7 @@
             border-radius: 2px;
         }
 
-        .input-group {
-            margin-bottom: 1rem;
-            text-align: left;
-        }
-
-        .input-group label {
-            font-size: 0.9rem;
-            display: block;
-            margin-bottom: 5px;
-        }
+        .input-group { margin-bottom: 1rem; text-align: left; }
 
         .input-group input {
             width: 100%;
@@ -77,72 +56,76 @@
             border: none;
             color: white;
             border-radius: 6px;
-            font-size: 1rem;
             cursor: pointer;
-            transition: 0.3s;
         }
 
-        .btn:hover {
-            background-color: #27ae60;
-        }
-
-        .error {
-            color: red;
-            margin-top: 10px;
+        .link {
+            margin-top: 15px;
+            display: block;
             font-size: 0.9rem;
         }
+
+        .error { color: red; margin-top: 10px; }
     </style>
 </head>
 <body>
 
-    <div class="container">
-        <img src="static/img/logo1.png" alt="Logo do site" class="logo">
+<div class="container">
+    <img src="static/img/logo1.png" class="logo">
 
-        <h1>Login</h1>
+    <h1>Login</h1>
+    <div class="divider"></div>
 
-        <div class="divider"></div>
+    <form id="loginForm">
+        <div class="input-group">
+            <input type="text" id="username" placeholder="Usuário" required>
+        </div>
 
-        <form id="loginForm">
-            <div class="input-group">
-                <label>Usuário</label>
-                <input type="text" id="username" required>
-            </div>
+        <div class="input-group">
+            <input type="password" id="password" placeholder="Senha" required>
+        </div>
 
-            <div class="input-group">
-                <label>Senha</label>
-                <input type="password" id="password" required>
-            </div>
+        <button class="btn">Entrar</button>
 
-            <button type="submit" class="btn">Entrar</button>
+        <p class="error" id="errorMsg"></p>
+    </form>
 
-            <p class="error" id="errorMsg"></p>
-        </form>
-    </div>
+    <a href="register.html" class="link">Criar novo usuário</a>
+</div>
 
-    <script>
-        const form = document.getElementById("loginForm");
-        const errorMsg = document.getElementById("errorMsg");
+<script>
+const form = document.getElementById("loginForm")
+const errorMsg = document.getElementById("errorMsg")
 
-        form.addEventListener("submit", function(e) {
-            e.preventDefault();
+form.addEventListener("submit", async function(e) {
+    e.preventDefault()
 
-            const username = document.getElementById("username").value;
-            const password = document.getElementById("password").value;
+    const login = document.getElementById("username").value
+    const senha = document.getElementById("password").value
 
-            if (username === "admin" && password === "123") {
-                
-                sessionStorage.setItem("user", username);
+    const response = await fetch("http://trainingscheduleback-production.up.railway.app/auth/login", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({ login, senha })
+    })
 
-                window.location.href = "index.html";
-            } else {
-                errorMsg.textContent = "Usuário ou senha inválidos!";
-            }
-        });
+    const data = await response.json()
 
-        if (sessionStorage.getItem("user")) {
-            window.location.href = "index.html";
-        }
-    </script>
+    if (!response.ok) {
+        errorMsg.textContent = data.error
+        return
+    }
+
+    localStorage.setItem("token", data.token)
+    localStorage.setItem("user", JSON.stringify(data.user))
+
+    window.location.href = "index.html"
+})
+
+if (localStorage.getItem("token")) {
+    window.location.href = "index.html"
+}
+</script>
 
 </body>
 </html>
