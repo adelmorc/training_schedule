@@ -6,13 +6,18 @@
     <link rel="shortcut icon" href="static/img/favicon-logo.png" type="image/x-icon">
     <title>Usuários | Training Schedule</title>
 
+    <!-- Dark Mode Script (Prevent Flash) -->
+    <script>
+        const getPreferredTheme = () => localStorage.getItem('theme') || 'light';
+        document.documentElement.setAttribute('data-bs-theme', getPreferredTheme());
+    </script>
+
     <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- DataTables Bootstrap 5 CSS -->
     <link href="https://cdn.datatables.net/1.13.7/css/dataTables.bootstrap5.min.css" rel="stylesheet">
     <!-- DataTables Buttons CSS -->
     <link href="https://cdn.datatables.net/buttons/2.4.2/css/buttons.bootstrap5.min.css" rel="stylesheet">
-
 
 </head>
 <body class="bg-body-tertiary">
@@ -38,7 +43,10 @@
                         </ul>
                     </li>
                 </ul>
-                <div class="d-flex align-items-center gap-4 text-white">
+                <div class="d-flex align-items-center gap-3 text-white">
+                    <button class="btn btn-outline-light btn-sm rounded-circle d-flex align-items-center justify-content-center" style="width: 32px; height: 32px;" id="themeToggleBtn" title="Alternar Tema">
+                        <span id="themeIcon">🌓</span>
+                    </button>
                     <div class="d-flex align-items-center gap-2" style="background: rgba(255,255,255,0.1); padding: 6px 16px; border-radius: 20px; font-size: 0.95rem;">
                         <span>👤</span>
                         <span id="userName" class="fw-semibold" style="letter-spacing: 0.5px;"></span>
@@ -50,15 +58,15 @@
     </nav>
 
     <div class="container mt-5">
-        <div class="card shadow-sm border-0 rounded-4 p-4 p-md-5 bg-white">
+        <div class="card shadow-sm border-0 rounded-4 p-4 p-md-5 bg-body">
             <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-3">
-                <h3 class="fw-bold text-dark mb-0">Lista de Usuários</h3>
+                <h3 class="fw-bold mb-0">Lista de Usuários</h3>
                 <a href="create_user.html" class="btn btn-success rounded-pill px-4 fw-semibold shadow-sm">➕ Incluir Usuário</a>
             </div>
 
             <div class="table-responsive">
                 <table id="usersTable" class="table table-hover align-middle" style="width:100%">
-                    <thead class="table-light">
+                    <thead class="table-group-divider">
                         <tr>
                             <th class="border-0">ID</th>
                             <th class="border-0">Nome</th>
@@ -77,7 +85,7 @@
     <!-- Modal Confirmação de Exclusão -->
     <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content border-0 shadow rounded-4">
+            <div class="modal-content border-0 shadow rounded-4 bg-body">
                 <div class="modal-header border-bottom-0 pb-0">
                     <h5 class="modal-title fw-bold" id="deleteModalLabel">Confirmar Exclusão</h5>
                     <button type="button" class="btn-close shadow-none" data-bs-dismiss="modal" aria-label="Fechar"></button>
@@ -86,7 +94,7 @@
                     Tem certeza que deseja excluir o usuário <strong class="text-danger" id="deleteUserName"></strong>? Esta ação não pode ser desfeita.
                 </div>
                 <div class="modal-footer border-top-0 pt-0">
-                    <button type="button" class="btn btn-light rounded-pill px-4 fw-semibold border" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-secondary rounded-pill px-4 fw-semibold shadow-sm" data-bs-dismiss="modal">Cancelar</button>
                     <button type="button" class="btn btn-danger rounded-pill px-4 fw-semibold shadow-sm" id="confirmDeleteBtn">Excluir</button>
                 </div>
             </div>
@@ -109,6 +117,28 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
     <script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.html5.min.js"></script>
     <script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.print.min.js"></script>
+
+    <!-- Dark Mode Toggle Script -->
+    <script>
+        const themeToggleBtn = document.getElementById('themeToggleBtn');
+        const themeIcon = document.getElementById('themeIcon');
+        
+        const updateThemeIcon = (theme) => {
+            themeIcon.textContent = theme === 'dark' ? '☀️' : '🌙';
+        };
+
+        updateThemeIcon(document.documentElement.getAttribute('data-bs-theme'));
+
+        if(themeToggleBtn) {
+            themeToggleBtn.addEventListener('click', () => {
+                const currentTheme = document.documentElement.getAttribute('data-bs-theme');
+                const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+                document.documentElement.setAttribute('data-bs-theme', newTheme);
+                localStorage.setItem('theme', newTheme);
+                updateThemeIcon(newTheme);
+            });
+        }
+    </script>
 
     <script>
         let userIdToDelete = null;
@@ -184,15 +214,28 @@
             const tbody = document.querySelector("#usersTable tbody");
             tbody.innerHTML = "";
 
+            let loggedUserId = null;
+            try {
+                const userObj = JSON.parse(localStorage.getItem("user"));
+                if (userObj && userObj.id) {
+                    loggedUserId = userObj.id;
+                }
+            } catch (e) {}
+
             data.forEach(user => {
                 const tr = document.createElement("tr");
+                const isLoggedUser = user.id === loggedUserId;
+                const deleteBtnHtml = isLoggedUser 
+                    ? `<button class="btn btn-secondary btn-sm rounded-pill px-3 shadow-sm" disabled title="Você não pode excluir a si mesmo">Excluir</button>`
+                    : `<button class="btn btn-danger btn-sm rounded-pill px-3 shadow-sm" onclick="openDeleteModal(${user.id}, '${user.nome}')">Excluir</button>`;
+
                 tr.innerHTML = `
                     <td>${user.id || '-'}</td>
                     <td>${user.nome || '-'}</td>
                     <td>${user.login || '-'}</td>
                     <td>
                         <a href="edit_user.html?id=${user.id}" class="btn btn-primary btn-sm rounded-pill px-3 shadow-sm me-1">Editar</a>
-                        <button class="btn btn-danger btn-sm rounded-pill px-3 shadow-sm" onclick="openDeleteModal(${user.id}, '${user.nome}')">Excluir</button>
+                        ${deleteBtnHtml}
                     </td>
                 `;
                 tbody.appendChild(tr);
