@@ -4,9 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="shortcut icon" href="static/img/favicon-logo.png" type="image/x-icon">
-    <title>
-        Training Schedule | Em Desenvolvimento
-    </title>
+    <title>Training Schedule | Em Desenvolvimento</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>        
         * {
             margin: 0;
@@ -18,37 +18,6 @@
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background-color: #f4f7f6;
             color: #333;
-        }
-
-        .navbar {
-            width: 100%;
-            background-color: #2c3e50;
-            color: white;
-            padding: 10px 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .nav-left {
-            font-size: 1.2rem;
-            font-weight: bold;
-        }
-
-        .nav-right {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .logout-btn {
-            padding: 5px 10px;
-            border: none;
-            background-color: #e74c3c;
-            color: white;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 0.8rem;
         }
 
         .logout-btn:hover {
@@ -95,13 +64,31 @@
 </head>
 <body>
 
-    <div class="navbar">
-        <div class="nav-left">Training Schedule</div>
-        <div class="nav-right">
-            <span id="userName"></span>
-            <button class="logout-btn" onclick="logout()">Sair</button>
+    <!-- Navbar Bootstrap 5 -->
+    <nav class="navbar navbar-expand-lg navbar-dark" style="background-color: #2c3e50; padding: 10px 20px;">
+        <div class="container-fluid">
+            <a class="navbar-brand fw-bold" href="index.html">Training Schedule</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Alternar navegação">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNavDropdown">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownCadastros" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            Cadastros
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="navbarDropdownCadastros">
+                            <li><a class="dropdown-item" href="list_users.html">Usuários</a></li>
+                        </ul>
+                    </li>
+                </ul>
+                <div class="d-flex align-items-center gap-3 text-white">
+                    <span id="userName" class="fw-semibold"></span>
+                    <button class="btn btn-danger btn-sm" onclick="logout()">Sair</button>
+                </div>
+            </div>
         </div>
-    </div>
+    </nav>
 
     <div class="main">
         <div class="container">
@@ -121,7 +108,7 @@
             }
 
             try {
-                const response = await fetch("https://trainingscheduleback-production-2a22.up.railway.app/auth/me", {
+                const response = await fetch("http://localhost:3000/auth/me", {
                     headers: {
                         "Authorization": "Bearer " + token
                     }
@@ -151,5 +138,7 @@
         }
     </script>
 
+    <!-- Bootstrap 5 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
