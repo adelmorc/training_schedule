@@ -124,7 +124,7 @@
                 if (!response.ok) throw new Error();
 
                 const data = await response.json();
-                document.getElementById("userName").textContent = "👤 " + data.user.login;
+                document.getElementById("userName").textContent = data.user.login;
 
             } catch (error) {
                 logout();
