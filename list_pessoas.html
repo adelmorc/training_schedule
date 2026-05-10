@@ -243,7 +243,7 @@
                     <td>${item.pessoa_tipo_descricao || item.pessoa_tipo_id}</td>
                     <td>
                         <a href="edit_pessoa.html?id=${item.id}" class="btn btn-primary btn-sm rounded-pill px-3 shadow-sm me-1">Editar</a>
-                        <button class="btn btn-danger btn-sm rounded-pill px-3 shadow-sm" onclick="openDeleteModal(${item.id}, '${item.nome}')">Excluir</button>
+                        <button class="btn btn-danger btn-sm rounded-pill px-3 shadow-sm" onclick="openDeleteModal(${item.id}, '${item.nome}', '${formatCPF(item.cpf)}')">Excluir</button>
                     </td>
                 `;
                 tbody.appendChild(tr);
@@ -264,9 +264,9 @@
             $('.dt-buttons .btn').removeClass('dt-button');
         }
 
-        function openDeleteModal(id, nome) {
+        function openDeleteModal(id, nome, cpf) {
             idToDelete = id;
-            document.getElementById("deleteName").textContent = nome;
+            document.getElementById("deleteName").textContent = `${nome} (CPF: ${cpf || '-'})`;
             const deleteModal = new bootstrap.Modal(document.getElementById('deleteModal'));
             deleteModal.show();
         }

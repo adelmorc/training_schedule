@@ -221,7 +221,7 @@
                     <td>${item.treinamento_tipo_nome || item.treinamento_tipo_id}</td>
                     <td>
                         <a href="edit_treinamento.html?id=${item.id}" class="btn btn-primary btn-sm rounded-pill px-3 shadow-sm me-1">Editar</a>
-                        <button class="btn btn-danger btn-sm rounded-pill px-3 shadow-sm" onclick="openDeleteModal(${item.id}, '${item.descricao}')">Excluir</button>
+                        <button class="btn btn-danger btn-sm rounded-pill px-3 shadow-sm" onclick="openDeleteModal(${item.id}, '${item.descricao}', '${formatDateTime(item.datahora_inicio)}')">Excluir</button>
                     </td>
                 `;
                 tbody.appendChild(tr);
@@ -242,9 +242,9 @@
             $('.dt-buttons .btn').removeClass('dt-button');
         }
 
-        function openDeleteModal(id, nome) {
+        function openDeleteModal(id, nome, dataInicio) {
             idToDelete = id;
-            document.getElementById("deleteName").textContent = nome;
+            document.getElementById("deleteName").textContent = `${nome} (Início: ${dataInicio || '-'})`;
             const deleteModal = new bootstrap.Modal(document.getElementById('deleteModal'));
             deleteModal.show();
         }
