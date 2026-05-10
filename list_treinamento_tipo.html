@@ -4,25 +4,19 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="shortcut icon" href="static/img/favicon-logo.png" type="image/x-icon">
-    <title>Usuários | Training Schedule</title>
+    <title>Tipos de Treinamento | Training Schedule</title>
 
-    <!-- Dark Mode Script (Prevent Flash) -->
     <script>
         const getPreferredTheme = () => localStorage.getItem('theme') || 'light';
         document.documentElement.setAttribute('data-bs-theme', getPreferredTheme());
     </script>
 
-    <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- DataTables Bootstrap 5 CSS -->
     <link href="https://cdn.datatables.net/1.13.7/css/dataTables.bootstrap5.min.css" rel="stylesheet">
-    <!-- DataTables Buttons CSS -->
     <link href="https://cdn.datatables.net/buttons/2.4.2/css/buttons.bootstrap5.min.css" rel="stylesheet">
-
 </head>
 <body class="bg-body-tertiary">
 
-    <!-- Navbar Bootstrap 5 Elegante -->
     <nav class="navbar navbar-expand-lg navbar-dark shadow-sm" style="background: linear-gradient(135deg, #2c3e50, #34495e); padding: 12px 20px; border-bottom: 2px solid #2ecc71;">
         <div class="container-fluid">
             <a class="navbar-brand fw-bold d-flex align-items-center gap-2" href="index.html">
@@ -67,22 +61,20 @@
     <div class="container mt-5">
         <div class="card shadow-sm border-0 rounded-4 p-4 p-md-5 bg-body">
             <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-3">
-                <h3 class="fw-bold mb-0">Lista de Usuários</h3>
-                <a href="create_user.html" class="btn btn-success rounded-pill px-4 fw-semibold shadow-sm">➕ Incluir Usuário</a>
+                <h3 class="fw-bold mb-0">Lista de Tipos de Treinamento</h3>
+                <a href="create_treinamento_tipo.html" class="btn btn-success rounded-pill px-4 fw-semibold shadow-sm">➕ Incluir Tipo</a>
             </div>
 
             <div class="table-responsive">
-                <table id="usersTable" class="table table-hover align-middle" style="width:100%">
+                <table id="dataTable" class="table table-hover align-middle" style="width:100%">
                     <thead class="table-group-divider">
                         <tr>
                             <th class="border-0">ID</th>
                             <th class="border-0">Nome</th>
-                            <th class="border-0">Login</th>
                             <th class="border-0" style="width: 180px;">Ações</th>
                         </tr>
                     </thead>
                     <tbody class="border-top-0">
-                        <!-- Os dados serão inseridos aqui via JS -->
                     </tbody>
                 </table>
             </div>
@@ -98,7 +90,7 @@
                     <button type="button" class="btn-close shadow-none" data-bs-dismiss="modal" aria-label="Fechar"></button>
                 </div>
                 <div class="modal-body pt-3 pb-4">
-                    Tem certeza que deseja excluir o usuário <strong class="text-danger" id="deleteUserName"></strong>? Esta ação não pode ser desfeita.
+                    Tem certeza que deseja excluir <strong class="text-danger" id="deleteName"></strong>?
                 </div>
                 <div class="modal-footer border-top-0 pt-0">
                     <button type="button" class="btn btn-secondary rounded-pill px-4 fw-semibold shadow-sm" data-bs-dismiss="modal">Cancelar</button>
@@ -108,15 +100,10 @@
         </div>
     </div>
 
-    <!-- jQuery -->
     <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
-    <!-- Bootstrap 5 JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-    <!-- DataTables Core -->
     <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
-    <!-- DataTables Bootstrap 5 -->
     <script src="https://cdn.datatables.net/1.13.7/js/dataTables.bootstrap5.min.js"></script>
-    <!-- DataTables Buttons -->
     <script src="https://cdn.datatables.net/buttons/2.4.2/js/dataTables.buttons.min.js"></script>
     <script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.bootstrap5.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
@@ -125,7 +112,6 @@
     <script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.html5.min.js"></script>
     <script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.print.min.js"></script>
 
-    <!-- Dark Mode Toggle Script -->
     <script>
         const themeToggleBtn = document.getElementById('themeToggleBtn');
         const themeIcon = document.getElementById('themeIcon');
@@ -133,7 +119,6 @@
         const updateThemeIcon = (theme) => {
             themeIcon.textContent = theme === 'dark' ? '☀️' : '🌙';
         };
-
         updateThemeIcon(document.documentElement.getAttribute('data-bs-theme'));
 
         if(themeToggleBtn) {
@@ -148,10 +133,9 @@
     </script>
 
     <script>
-        let userIdToDelete = null;
-        let dataTable = null;
+        let idToDelete = null;
+        let dataTableObj = null;
 
-        // Verificar Autenticação
         async function checkAuth() {
             const token = localStorage.getItem("token");
             if (!token) {
@@ -169,9 +153,7 @@
                 const data = await response.json();
                 document.getElementById("userName").textContent = data.user.login;
 
-                // Após validar, busca os usuários
-                fetchUsers(token);
-
+                fetchData(token);
             } catch (error) {
                 logout();
             }
@@ -183,30 +165,19 @@
             window.location.href = "login.html";
         }
 
-        // Buscar Usuários na API (Endpoint pode variar dependendo do seu backend)
-        async function fetchUsers(token) {
+        async function fetchData(token) {
             try {
-                // ATENÇÃO: Verifique qual é a URL correta na sua API para listar usuários
-                const response = await fetch("https://training-schedule-back.onrender.com/users", {
+                const response = await fetch("https://training-schedule-back.onrender.com/treinamento-tipo", {
                     headers: { "Authorization": "Bearer " + token }
                 });
 
                 if (!response.ok) {
-                    // Trata caso a API não tenha essa rota
-                    console.error("Erro ao buscar usuários");
-                    // Exemplo de dados fictícios caso a API falhe (remover depois)
-                    initDataTable([
-                        { id: 1, nome: "Usuário Teste", login: "teste" },
-                        { id: 2, nome: "Admin", login: "admin" }
-                    ]);
+                    console.error("Erro ao buscar dados");
                     return;
                 }
 
-                const users = await response.json();
-                
-                // Inicializar DataTable com os dados da API
-                // Caso a sua API retorne os dados dentro de uma propriedade (ex: users.data), ajuste aqui.
-                initDataTable(users);
+                const data = await response.json();
+                initDataTable(data);
 
             } catch (error) {
                 console.error("Erro na requisição:", error);
@@ -214,98 +185,65 @@
         }
 
         function initDataTable(data) {
-            if (dataTable) {
-                dataTable.destroy();
+            if (dataTableObj) {
+                dataTableObj.destroy();
             }
 
-            const tbody = document.querySelector("#usersTable tbody");
+            const tbody = document.querySelector("#dataTable tbody");
             tbody.innerHTML = "";
 
-            let loggedUserId = null;
-            try {
-                const userObj = JSON.parse(localStorage.getItem("user"));
-                if (userObj && userObj.id) {
-                    loggedUserId = userObj.id;
-                }
-            } catch (e) {}
-
-            data.forEach(user => {
+            data.forEach(item => {
                 const tr = document.createElement("tr");
-                const isLoggedUser = user.id === loggedUserId;
-                const deleteBtnHtml = isLoggedUser 
-                    ? `<button class="btn btn-secondary btn-sm rounded-pill px-3 shadow-sm" disabled title="Você não pode excluir a si mesmo">Excluir</button>`
-                    : `<button class="btn btn-danger btn-sm rounded-pill px-3 shadow-sm" onclick="openDeleteModal(${user.id}, '${user.nome}')">Excluir</button>`;
-
                 tr.innerHTML = `
-                    <td>${user.id || '-'}</td>
-                    <td>${user.nome || '-'}</td>
-                    <td>${user.login || '-'}</td>
+                    <td>${item.id}</td>
+                    <td>${item.nome}</td>
                     <td>
-                        <a href="edit_user.html?id=${user.id}" class="btn btn-primary btn-sm rounded-pill px-3 shadow-sm me-1">Editar</a>
-                        ${deleteBtnHtml}
+                        <a href="edit_treinamento_tipo.html?id=${item.id}" class="btn btn-primary btn-sm rounded-pill px-3 shadow-sm me-1">Editar</a>
+                        <button class="btn btn-danger btn-sm rounded-pill px-3 shadow-sm" onclick="openDeleteModal(${item.id}, '${item.nome}')">Excluir</button>
                     </td>
                 `;
                 tbody.appendChild(tr);
             });
 
-            dataTable = $('#usersTable').DataTable({
+            dataTableObj = $('#dataTable').DataTable({
                 language: {
                     url: 'https://cdn.datatables.net/plug-ins/1.13.7/i18n/pt-BR.json'
                 },
                 dom: 'Bfrtip',
                 buttons: [
-                    {
-                        extend: 'copy',
-                        text: 'Copiar',
-                        className: 'btn btn-secondary btn-sm mb-2'
-                    },
-                    {
-                        extend: 'excel',
-                        text: 'Excel',
-                        className: 'btn btn-success btn-sm mb-2'
-                    },
-                    {
-                        extend: 'pdf',
-                        text: 'PDF',
-                        className: 'btn btn-danger btn-sm mb-2'
-                    },
-                    {
-                        extend: 'print',
-                        text: 'Imprimir',
-                        className: 'btn btn-info btn-sm mb-2 text-white'
-                    }
+                    { extend: 'copy', text: 'Copiar', className: 'btn btn-secondary btn-sm mb-2' },
+                    { extend: 'excel', text: 'Excel', className: 'btn btn-success btn-sm mb-2' },
+                    { extend: 'pdf', text: 'PDF', className: 'btn btn-danger btn-sm mb-2' },
+                    { extend: 'print', text: 'Imprimir', className: 'btn btn-info btn-sm mb-2 text-white' }
                 ]
             });
-            
-            // Corrige estilos dos botões do DataTables
             $('.dt-buttons .btn').removeClass('dt-button');
         }
 
         function openDeleteModal(id, nome) {
-            userIdToDelete = id;
-            document.getElementById("deleteUserName").textContent = nome;
+            idToDelete = id;
+            document.getElementById("deleteName").textContent = nome;
             const deleteModal = new bootstrap.Modal(document.getElementById('deleteModal'));
             deleteModal.show();
         }
 
         document.getElementById("confirmDeleteBtn").addEventListener("click", async () => {
-            if (!userIdToDelete) return;
+            if (!idToDelete) return;
 
             const token = localStorage.getItem("token");
             try {
-                // ATENÇÃO: Verifique a URL correta de exclusão na sua API
-                const response = await fetch(`https://training-schedule-back.onrender.com/users/${userIdToDelete}`, {
+                const response = await fetch(`https://training-schedule-back.onrender.com/treinamento-tipo/${idToDelete}`, {
                     method: "DELETE",
                     headers: { "Authorization": "Bearer " + token }
                 });
 
                 if (response.ok) {
-                    // Recarrega a tabela e fecha o modal
                     const deleteModal = bootstrap.Modal.getInstance(document.getElementById('deleteModal'));
                     deleteModal.hide();
-                    fetchUsers(token);
+                    fetchData(token);
                 } else {
-                    alert("Erro ao excluir usuário. A rota pode não existir na API.");
+                    const errorObj = await response.json();
+                    alert("Erro ao excluir: " + (errorObj.error || "Erro desconhecido"));
                 }
             } catch (error) {
                 console.error("Erro:", error);
