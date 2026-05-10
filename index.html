@@ -37,11 +37,18 @@
                             Cadastros
                         </a>
                         <ul class="dropdown-menu shadow border-0 mt-2" aria-labelledby="navbarDropdownCadastros" style="border-radius: 8px;">
-                            <li><a class="dropdown-item py-2" href="list_users.html">👥 Gerenciar Usuários</a></li>
+                            <li><a class="dropdown-item py-2" href="list_users.html">👥 Usuários</a></li>
                             <li><a class="dropdown-item py-2" href="list_pessoa_tipo.html">🏷️ Tipos de Pessoa</a></li>
-                            <li><a class="dropdown-item py-2" href="list_treinamento_tipo.html">🏷️ Tipos de Treinamento</a></li>
                             <li><a class="dropdown-item py-2" href="list_pessoas.html">🧑‍🤝‍🧑 Pessoas</a></li>
-                            <li><a class="dropdown-item py-2" href="list_treinamentos.html">📚 Treinamentos</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle px-3 text-white" href="#" id="navbarDropdownTreinamentos" role="button" data-bs-toggle="dropdown" aria-expanded="false" style="font-weight: 500; transition: all 0.3s;">
+                            Treinamentos
+                        </a>
+                        <ul class="dropdown-menu shadow border-0 mt-2" aria-labelledby="navbarDropdownTreinamentos" style="border-radius: 8px;">
+                            <li><a class="dropdown-item py-2" href="list_treinamento_tipo.html">🏷️ Tipos de Treinamento</a></li>
+                            <li><a class="dropdown-item py-2" href="list_treinamentos.html">📚 Agenda de Treinamentos</a></li>
                         </ul>
                     </li>
                 </ul>
@@ -59,13 +66,69 @@
         </div>
     </nav>
 
-    <div class="d-flex justify-content-center align-items-center" style="height: calc(100vh - 76px);">
-        <div class="container text-center">
-            <!-- Removido bg-white e text-dark para adaptar ao tema escuro -->
-            <div class="card shadow-sm border-0 rounded-4 p-5 d-inline-block bg-body" style="max-width: 500px; width: 100%;">
-                <img src="static/img/logo1.png" alt="Logo do site" class="img-fluid mb-4 mx-auto" style="max-width: 280px;">
-                <h3 class="fw-bold mb-3">Em desenvolvimento...</h3>
-                <div class="mx-auto bg-success rounded-pill" style="height: 4px; width: 60px;"></div>
+    <div class="container mt-5 pt-3">
+        <h2 class="fw-bold mb-4">Visão Geral</h2>
+        <div class="row g-4">
+            <div class="col-md-3">
+                <div class="card shadow-sm border-0 rounded-4 bg-primary text-white h-100" style="transition: transform 0.2s;" onmouseover="this.style.transform='translateY(-5px)'" onmouseout="this.style.transform='translateY(0)'">
+                    <div class="card-body p-4 d-flex flex-column justify-content-between">
+                        <div>
+                            <h6 class="text-white-50 fw-semibold text-uppercase mb-2">Usuários Ativos</h6>
+                            <h2 class="fw-bold mb-0" id="countUsers">...</h2>
+                        </div>
+                        <div class="mt-3 text-end fs-1 opacity-50">👥</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-3">
+                <div class="card shadow-sm border-0 rounded-4 bg-success text-white h-100" style="transition: transform 0.2s;" onmouseover="this.style.transform='translateY(-5px)'" onmouseout="this.style.transform='translateY(0)'">
+                    <div class="card-body p-4 d-flex flex-column justify-content-between">
+                        <div>
+                            <h6 class="text-white-50 fw-semibold text-uppercase mb-2">Tipos de Pessoa</h6>
+                            <h2 class="fw-bold mb-0" id="countPessoaTipo">...</h2>
+                        </div>
+                        <div class="mt-3 text-end fs-1 opacity-50">🏷️</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-3">
+                <div class="card shadow-sm border-0 rounded-4 bg-warning text-dark h-100" style="transition: transform 0.2s;" onmouseover="this.style.transform='translateY(-5px)'" onmouseout="this.style.transform='translateY(0)'">
+                    <div class="card-body p-4 d-flex flex-column justify-content-between">
+                        <div>
+                            <h6 class="text-dark fw-semibold text-uppercase mb-2" style="opacity: 0.7;">Pessoas Cadastradas</h6>
+                            <h2 class="fw-bold mb-0" id="countPessoas">...</h2>
+                        </div>
+                        <div class="mt-3 text-end fs-1" style="opacity: 0.4;">🧑‍🤝‍🧑</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-3">
+                <div class="card shadow-sm border-0 rounded-4 bg-info text-white h-100" style="transition: transform 0.2s;" onmouseover="this.style.transform='translateY(-5px)'" onmouseout="this.style.transform='translateY(0)'">
+                    <div class="card-body p-4 d-flex flex-column justify-content-between">
+                        <div>
+                            <h6 class="text-white fw-semibold text-uppercase mb-2" style="opacity: 0.8;">Treinamentos</h6>
+                            <h2 class="fw-bold mb-0" id="countTreinamentos">...</h2>
+                        </div>
+                        <div class="mt-3 text-end fs-1 opacity-50">📚</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="row mt-5">
+            <div class="col-md-12">
+                <div class="card shadow-sm border-0 rounded-4 p-4 bg-body">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h5 class="fw-bold mb-0 d-flex align-items-center gap-2">
+                            <img src="static/img/favicon-logo.png" alt="Logo" width="24" height="24" class="rounded">
+                            Bem-vindo(a) ao Training Schedule
+                        </h5>
+                    </div>
+                    <p class="text-body-secondary mb-0">Utilize o menu superior para acessar os cadastros do sistema e gerenciar a agenda de treinamentos. Escolha a funcionalidade desejada para continuar.</p>
+                </div>
             </div>
         </div>
     </div>
@@ -117,11 +180,48 @@
 
                 const data = await response.json()
                 document.getElementById("userName").textContent = data.user.login
+                
+                // Fetch stats for dashboard
+                loadDashboardStats(token);
 
             } catch (error) {
                 localStorage.removeItem("token")
                 sessionStorage.removeItem("user")
                 window.location.href = "login.html"
+            }
+        }
+        
+        async function loadDashboardStats(token) {
+            const baseUrl = "https://training-schedule-back.onrender.com";
+            const headers = { "Authorization": "Bearer " + token };
+            
+            try {
+                // Fetch in parallel
+                const [usersRes, pessoaTipoRes, pessoasRes, treinamentosRes] = await Promise.all([
+                    fetch(`${baseUrl}/users`, { headers }),
+                    fetch(`${baseUrl}/pessoa-tipo`, { headers }),
+                    fetch(`${baseUrl}/pessoas`, { headers }),
+                    fetch(`${baseUrl}/treinamentos`, { headers })
+                ]);
+
+                if(usersRes.ok) {
+                    const users = await usersRes.json();
+                    document.getElementById("countUsers").textContent = users.length || 0;
+                }
+                if(pessoaTipoRes.ok) {
+                    const data = await pessoaTipoRes.json();
+                    document.getElementById("countPessoaTipo").textContent = data.length || 0;
+                }
+                if(pessoasRes.ok) {
+                    const data = await pessoasRes.json();
+                    document.getElementById("countPessoas").textContent = data.length || 0;
+                }
+                if(treinamentosRes.ok) {
+                    const data = await treinamentosRes.json();
+                    document.getElementById("countTreinamentos").textContent = data.length || 0;
+                }
+            } catch (error) {
+                console.error("Erro ao carregar estatísticas do dashboard", error);
             }
         }
 
